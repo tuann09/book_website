@@ -4,6 +4,7 @@ import { Button, Checkbox, Divider, Form, Input } from "antd";
 import { useState } from "react";
 import "./register.scss";
 import { Link } from "react-router-dom";
+import { loginAPI } from "@/services/api";
 type FieldType = {
     fullName: string;
     email: string;
@@ -12,8 +13,10 @@ type FieldType = {
 };
 const RegisterPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
-    const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         console.log("Success:", values);
+        const res = await loginAPI("user@gmail.com", "123456");
+        console.log("check", res);
     };
 
     const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
@@ -21,6 +24,7 @@ const RegisterPage = () => {
     ) => {
         console.log("Failed:", errorInfo);
     };
+
     return (
         <div className="register-page">
             <main className="main">
