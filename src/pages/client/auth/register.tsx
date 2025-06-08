@@ -42,9 +42,7 @@ const RegisterPage = () => {
                 <div className="container">
                     <section className="wrapper">
                         <div className="heading">
-                            <h2 className="text text-large">
-                                Đăng kí tài khoản
-                            </h2>
+                            <h2 className="text text-large">Đăng Ký</h2>
                             <Divider />
                         </div>
                         <Form
