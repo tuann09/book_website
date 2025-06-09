@@ -1,9 +1,11 @@
 import { getUsersAPI } from "@/services/api";
 import { dateRangeValidate } from "@/services/helper";
 import {
+    CloudUploadOutlined,
     DeleteTwoTone,
     EditOutlined,
     EditTwoTone,
+    ExportOutlined,
     PlusOutlined,
 } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
@@ -12,6 +14,8 @@ import { Button, Space, Tag } from "antd";
 import { useRef, useState } from "react";
 import DetailUser from "./detail.user";
 import CreateUser from "./create.user";
+import ImportUser from "./data/import.user";
+
 type TSearch = {
     fullName: string;
     email: string;
@@ -30,6 +34,8 @@ const TableUser = () => {
     const [dataViewDetail, setDataViewDetail] = useState<IUserTable | null>(
         null
     );
+
+    const [openModalImport, setOpenModalImport] = useState<boolean>(false);
     const [openModalCreate, setOpenModalCreate] = useState(false);
     const refreshTable = () => {
         actionRef.current?.reload();
@@ -162,6 +168,22 @@ const TableUser = () => {
                 toolBarRender={() => [
                     <Button
                         key="button"
+                        icon={<ExportOutlined />}
+                        onClick={() => {}}
+                        type="primary"
+                    >
+                        Export
+                    </Button>,
+                    <Button
+                        key="button"
+                        icon={<CloudUploadOutlined />}
+                        onClick={() => setOpenModalImport(true)}
+                        type="primary"
+                    >
+                        Import
+                    </Button>,
+                    <Button
+                        key="button"
                         icon={<PlusOutlined />}
                         onClick={() => {
                             setOpenModalCreate(true);
@@ -182,6 +204,10 @@ const TableUser = () => {
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
                 refreshTable={refreshTable}
+            />
+            <ImportUser
+                openModalImport={openModalImport}
+                setOpenModalImport={setOpenModalImport}
             />
         </>
     );
