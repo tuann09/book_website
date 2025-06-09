@@ -46,7 +46,6 @@ declare global {
     }
     interface IUserTable {
         _id: string;
-
         fullName: string;
         email: string;
         phone: string;
