@@ -1,7 +1,10 @@
-import { Modal, Table } from "antd";
+import { App, Modal, Table } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
 import type { UploadProps } from "antd";
+import { useState } from "react";
+import Exceljs from "exceljs";
+import { Buffer } from "buffer";
 
 const { Dragger } = Upload;
 
@@ -9,9 +12,16 @@ interface IProps {
     openModalImport: boolean;
     setOpenModalImport: (v: boolean) => void;
 }
+interface IDataImport {
+    fullName: string;
+    email: string;
+    phone: string;
+}
 
 const ImportUser = (props: IProps) => {
     const { setOpenModalImport, openModalImport } = props;
+    const { message } = App.useApp();
+    const [dataImport, setDataImport] = useState<IDataImport[]>([]);
 
     const propsUpload: UploadProps = {
         name: "file",
@@ -28,15 +38,42 @@ const ImportUser = (props: IProps) => {
             }, 1000);
         },
 
-        onChange(info) {
+        async onChange(info) {
             const { status } = info.file;
             if (status !== "uploading") {
                 console.log(info.file, info.fileList);
             }
             if (status === "done") {
+                console.log(info);
                 message.success(
                     `${info.file.name} file uploaded successfully.`
                 );
+                if (info.fileList && info.fileList.length > 0) {
+                    const file = info.fileList[0].originFileObj!;
+                    //load file to buffer
+                    const workbook = new Exceljs.Workbook();
+                    const arrayBuffer = await file.arrayBuffer();
+                    const buffer = Buffer.from(arrayBuffer);
+                    await workbook.xlsx.load(buffer);
+
+                    //convert file to json
+                    let jsonData: IDataImport[] = [];
+                    workbook.worksheets.forEach(function (sheet) {
+                        let firstRow = sheet.getRow(1);
+                        if (!firstRow.cellCount) return;
+                        let keys = firstRow.values as any[];
+                        sheet.eachRow((row, rowNumber) => {
+                            if (rowNumber == 1) return;
+                            let values = row.values as any;
+                            let obj: any = {};
+                            for (let i = 1; i < keys.length; i++) {
+                                obj[keys[i]] = values[i];
+                            }
+                            jsonData.push(obj);
+                        });
+                    });
+                    setDataImport(jsonData);
+                }
             } else if (status === "error") {
                 message.error(`${info.file.name} file upload failed.`);
             }
@@ -53,13 +90,17 @@ const ImportUser = (props: IProps) => {
                 width={"50vw"}
                 open={openModalImport}
                 onOk={() => setOpenModalImport(false)}
-                onCancel={() => setOpenModalImport(false)}
+                onCancel={() => {
+                    setOpenModalImport(false);
+                    setDataImport([]);
+                }}
                 okText="Import data"
                 okButtonProps={{
-                    disabled: true,
+                    disabled: dataImport.length > 0 ? false : true,
                 }}
                 //do not close when click outside
                 maskClosable={false}
+                destroyOnClose={true}
             >
                 <Dragger {...propsUpload}>
                     <p className="ant-upload-drag-icon">
@@ -76,6 +117,7 @@ const ImportUser = (props: IProps) => {
                 <div style={{ paddingTop: 20 }}>
                     <Table
                         title={() => <span>Dữ liệu upload:</span>}
+                        dataSource={dataImport}
                         columns={[
                             { dataIndex: "fullName", title: "Tên hiển thị" },
                             { dataIndex: "email", title: "Email" },
