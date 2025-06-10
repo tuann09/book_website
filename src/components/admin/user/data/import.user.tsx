@@ -6,6 +6,7 @@ import { useState } from "react";
 import Exceljs from "exceljs";
 import { Buffer } from "buffer";
 import { bulkCreateUserAPI } from "@/services/api";
+import templateFile from "assets/template/user.xlsx?url";
 
 const { Dragger } = Upload;
 
@@ -138,7 +139,14 @@ const ImportUser = (props: IProps) => {
                     </p>
                     <p className="ant-upload-hint">
                         Support for a single upload. Only accept .csv, .xls,
-                        .xlsx
+                        .xlsx or &nbsp;
+                        <a
+                            onClick={(e) => e.stopPropagation()}
+                            href={templateFile}
+                            download
+                        >
+                            Download Sample File
+                        </a>
                     </p>
                 </Dragger>
                 <div style={{ paddingTop: 20 }}>
