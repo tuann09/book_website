@@ -1,4 +1,4 @@
-import { Row, Col, Rate, Divider } from "antd";
+import { Row, Col, Rate, Divider, App } from "antd";
 import ImageGallery from "react-image-gallery";
 import { useEffect, useRef, useState } from "react";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
@@ -27,6 +27,7 @@ const BookDetail = (props: IProps) => {
     const [currentQuantity, setCurrentQuantity] = useState<number>(1);
     const refGallery = useRef<ImageGallery>(null);
     const { carts, setCarts } = useCurrentApp();
+    const { message } = App.useApp();
 
     useEffect(() => {
         if (currentBook) {
@@ -114,6 +115,7 @@ const BookDetail = (props: IProps) => {
             //sync React Context
             setCarts(data);
         }
+        message.success("Thêm vào giỏ hàng thành công");
     };
     console.log("carts", carts);
 
