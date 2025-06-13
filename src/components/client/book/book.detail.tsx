@@ -9,6 +9,7 @@ import ModalGallery from "./modal.gallery";
 interface IProps {
     currentBook: IBookTable | null;
 }
+type UserAction = "MINUS" | "PLUS";
 const BookDetail = (props: IProps) => {
     const { currentBook } = props;
     const [imageGallery, setImageGallery] = useState<
@@ -19,9 +20,10 @@ const BookDetail = (props: IProps) => {
             thumbnailClass: string;
         }[]
     >([]);
-    const [isOpenModalGallery, setIsOpenModalGallery] = useState(false);
-    const [currentIndex, setCurrentIndex] = useState(0);
-
+    const [isOpenModalGallery, setIsOpenModalGallery] =
+        useState<boolean>(false);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [currentQuantity, setCurrentQuantity] = useState<number>(1);
     const refGallery = useRef<ImageGallery>(null);
 
     useEffect(() => {
@@ -61,6 +63,22 @@ const BookDetail = (props: IProps) => {
         //get current index onClick
         setIsOpenModalGallery(true);
         setCurrentIndex(refGallery?.current?.getCurrentIndex() ?? 0);
+    };
+    const handleChangeButton = (action: UserAction) => {
+        if (action === "MINUS") {
+            if (currentQuantity > 1) {
+                setCurrentQuantity(currentQuantity - 1);
+            }
+        } else if (action === "PLUS") {
+            setCurrentQuantity(currentQuantity + 1);
+        }
+    };
+    const handleChangeInput = (value: string) => {
+        if (!isNaN(+value)) {
+            if (+value > 0 && currentBook && +value <= currentBook.quantity) {
+                setCurrentQuantity(+value);
+            }
+        }
     };
 
     return (
@@ -147,11 +165,26 @@ const BookDetail = (props: IProps) => {
                                 <div className="quantity">
                                     <span className="left">Số lượng</span>
                                     <span className="right">
-                                        <button>
+                                        <button
+                                            onClick={() => {
+                                                handleChangeButton("MINUS");
+                                            }}
+                                        >
                                             <MinusOutlined />
                                         </button>
-                                        <input defaultValue={1} />
-                                        <button>
+                                        <input
+                                            onChange={(event) =>
+                                                handleChangeInput(
+                                                    event.target.value
+                                                )
+                                            }
+                                            value={currentQuantity}
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                handleChangeButton("PLUS");
+                                            }}
+                                        >
                                             <PlusOutlined />
                                         </button>
                                     </span>
