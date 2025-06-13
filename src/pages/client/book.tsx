@@ -1,12 +1,19 @@
+import BookDetail from "components/client/book/book.detail";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+
 const BookPage = () => {
+    let { id } = useParams();
+
+    useEffect(() => {
+        if (id) {
+            //do somethingAdd commentMore actions
+            console.log("book id = ", id);
+        }
+    }, [id]);
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-4xl font-bold mb-4">
-                Welcome to the Book Page
-            </h1>
-            <p className="text-lg">
-                This is a simple home page for our application.
-            </p>
+        <div>
+            <BookDetail />
         </div>
     );
 };
