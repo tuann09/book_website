@@ -19,6 +19,7 @@ import ManageOrderPage from "pages/admin/manage.order";
 import ManageUserPage from "pages/admin/manage.user";
 import LayoutAdmin from "components/layout/layout.admin";
 import OrderPage from "./pages/client/order";
+import HistoryPage from "./pages/client/history";
 
 const router = createBrowserRouter([
     {
@@ -46,10 +47,10 @@ const router = createBrowserRouter([
                 element: <AboutPage />,
             },
             {
-                path: "/checkout",
+                path: "/history",
                 element: (
                     <ProtectedRoute>
-                        <div>checkout page</div>
+                        <HistoryPage />
                     </ProtectedRoute>
                 ),
             },
