@@ -1,9 +1,11 @@
+import TableOrder from "@/components/admin/order";
+
 const ManageOrderPage = () => {
     return (
         <div>
-            ManageOrderPage
+            <TableOrder />
         </div>
-    )
-}
+    );
+};
 
 export default ManageOrderPage;
