@@ -74,7 +74,7 @@ const TableOrder = () => {
                 actionRef={actionRef}
                 cardBordered
                 request={async (params, sort, filter) => {
-                    console.log(params, sort, filter);
+                    //console.log(params, sort, filter);
                     let query = "";
                     if (params) {
                         query += `current=${params.current}&pageSize=${params.pageSize}`;
