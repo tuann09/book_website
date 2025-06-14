@@ -43,6 +43,14 @@ const router = createBrowserRouter([
                 ),
             },
             {
+                path: "/vnpay/return-url",
+                element: (
+                    <ProtectedRoute>
+                        <div> return url</div>
+                    </ProtectedRoute>
+                ),
+            },
+            {
                 path: "/about",
                 element: <AboutPage />,
             },
@@ -84,6 +92,7 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
+
             {
                 path: "user",
                 element: (

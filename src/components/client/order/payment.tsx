@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { Input } from "antd";
 import { useCurrentApp } from "@/components/context/app.context";
 import type { FormProps } from "antd";
-import { createOrderAPI } from "@/services/api";
+import { createOrderAPI, getVNPayUrlAPI } from "@/services/api";
 import { isMobile } from "react-device-detect";
+import { v4 as uuidv4 } from "uuid";
 
 const { TextArea } = Input;
 
@@ -76,19 +77,50 @@ const Payment = (props: IProps) => {
         }));
 
         setIsSubmit(true);
-        const res = await createOrderAPI(
-            fullName,
-            address,
-            phone,
-            totalPrice,
-            method,
-            detail
-        );
+        let res = null;
+        const paymentRef = uuidv4(); // Generate a unique reference for the payment
+        if (method === "COD") {
+            res = await createOrderAPI(
+                fullName,
+                address,
+                phone,
+                totalPrice,
+                method,
+                detail
+            );
+        } else {
+            res = await createOrderAPI(
+                fullName,
+                address,
+                phone,
+                totalPrice,
+                method,
+                detail,
+                paymentRef
+            );
+        }
+
         if (res?.data) {
             localStorage.removeItem("carts");
             setCarts([]);
-            message.success("Mua hàng thành công!");
-            setCurrentStep(2);
+            if (method === "COD") {
+                message.success("Mua hàng thành công!");
+                setCurrentStep(2);
+            } else {
+                const r = await getVNPayUrlAPI(totalPrice, "vn", paymentRef);
+                if (r.data) {
+                    window.location.href = r.data.url;
+                } else {
+                    notification.error({
+                        message: "Có lỗi xảy ra",
+                        description:
+                            r.message && Array.isArray(r.message)
+                                ? r.message[0]
+                                : r.message,
+                        duration: 5,
+                    });
+                }
+            }
         } else {
             notification.error({
                 message: "Có lỗi xảy ra",
@@ -243,7 +275,7 @@ const Payment = (props: IProps) => {
                                             Thanh toán khi nhận hàng
                                         </Radio>
                                         <Radio value={"BANKING"}>
-                                            Chuyển khoản ngân hàng
+                                            Thanh toán bằng ví VNPAY
                                         </Radio>
                                     </Space>
                                 </Radio.Group>
