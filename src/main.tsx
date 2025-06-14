@@ -20,6 +20,7 @@ import ManageUserPage from "pages/admin/manage.user";
 import LayoutAdmin from "components/layout/layout.admin";
 import OrderPage from "./pages/client/order";
 import HistoryPage from "./pages/client/history";
+import ReturnURLPage from "./components/client/order/return.url";
 
 const router = createBrowserRouter([
     {
@@ -46,7 +47,7 @@ const router = createBrowserRouter([
                 path: "/vnpay/return-url",
                 element: (
                     <ProtectedRoute>
-                        <div> return url</div>
+                        <ReturnURLPage />
                     </ProtectedRoute>
                 ),
             },

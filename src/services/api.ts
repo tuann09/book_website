@@ -236,3 +236,19 @@ export const getDashboardAPI = () => {
         }>
     >(urlBackend);
 };
+export const updatePaymentOrderAPI = (
+    paymentStatus: string,
+    paymentRef: string
+) => {
+    const urlBackend = `/api/v1/order/update-payment-status`;
+    return axios.post<IBackendRes<ILogin>>(
+        urlBackend,
+        {
+            paymentStatus,
+            paymentRef,
+        },
+        {
+            headers: { delay: 1000 },
+        }
+    );
+};
