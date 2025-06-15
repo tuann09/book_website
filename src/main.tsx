@@ -21,6 +21,7 @@ import LayoutAdmin from "components/layout/layout.admin";
 import OrderPage from "./pages/client/order";
 import HistoryPage from "./pages/client/history";
 import ReturnURLPage from "./components/client/order/return.url";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const router = createBrowserRouter([
     {
@@ -126,9 +127,13 @@ createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <App>
             <AppProvider>
-                <ConfigProvider locale={viVN}>
-                    <RouterProvider router={router} />
-                </ConfigProvider>
+                <GoogleOAuthProvider
+                    clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+                >
+                    <ConfigProvider locale={viVN}>
+                        <RouterProvider router={router} />
+                    </ConfigProvider>
+                </GoogleOAuthProvider>
             </AppProvider>
         </App>
     </StrictMode>

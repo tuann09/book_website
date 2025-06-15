@@ -4,8 +4,11 @@ import { App, Button, Divider, Form, Input } from "antd";
 import { useState } from "react";
 import "./login.scss";
 import { Link, useNavigate } from "react-router-dom";
-import { loginAPI } from "@/services/api";
+import { loginAPI, loginWithGoogleAPI } from "@/services/api";
 import { useCurrentApp } from "@/components/context/app.context";
+import { GooglePlusOutlined } from "@ant-design/icons";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 type FieldType = {
     username: string;
     password: string;
@@ -46,7 +49,39 @@ const LoginPage = () => {
     ) => {
         console.log("Failed:", errorInfo);
     };
+    const loginGoogle = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            console.log(tokenResponse);
 
+            const { data } = await axios(
+                "https://www.googleapis.com/oauth2/v3/userinfo",
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenResponse?.access_token}`,
+                    },
+                }
+            );
+            if (data && data.email) {
+                const res = await loginWithGoogleAPI("GOOGLE", data.email);
+                if (res?.data) {
+                    setIsAuthenticated(true);
+                    setUser(res.data.user);
+                    localStorage.setItem("access_token", res.data.access_token);
+                    message.success("Đăng nhập tài khoản thành công!");
+                    navigate("/");
+                } else {
+                    notification.error({
+                        message: "Có lỗi xảy ra",
+                        description:
+                            res.message && Array.isArray(res.message)
+                                ? res.message[0]
+                                : res.message,
+                        duration: 5,
+                    });
+                }
+            }
+        },
+    });
     return (
         <div className="login-page">
             <main className="main">
@@ -104,6 +139,24 @@ const LoginPage = () => {
                                 </Button>
                             </Form.Item>
                             <Divider>Or</Divider>
+                            <div
+                                onClick={() => loginGoogle()}
+                                title="Đăng nhập với tài khoản Google"
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: 10,
+                                    textAlign: "center",
+                                    marginBottom: 25,
+                                    cursor: "pointer",
+                                }}
+                            >
+                                Đăng nhập với{" "}
+                                <GooglePlusOutlined
+                                    style={{ fontSize: 30, color: "green" }}
+                                />
+                            </div>
                             <p
                                 className="text text-normal"
                                 style={{ textAlign: "center" }}
